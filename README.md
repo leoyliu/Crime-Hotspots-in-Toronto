@@ -3,10 +3,15 @@
 ## Overview
 This repository contains a paper presenting a comprehensive analysis of crime trends in Toronto, leveraging a detailed dataset to explore how various types of crimes have evolved over recent years. Through data processing and visualization, the paper identifies significant trends in different crimes. The analysis provides valuable insights into the complex dynamics of urban crime, highlighting potential influencing factors such as socio-economic changes, urban development, and law enforcement strategies. This paper serves as a crucial resource for data-driven decision-making in public safety and community well-being initiatives.
 
-## Files structure
-- `inputs/` holds the `data/` directory with original dataset, `llm/` directory with llm usage, and `sketch` directory with the sketch for dataset and observation.
-- `outputs/` contains the `paper/` directory featuring the paper's PDF, the R Markdown script, and sourced references and `data/` directory with cleaned dataset.
-- `scripts/` contains the R script employed for data retrieval from the Toronto Open Data Portal, cleansing, simulation, and testing.
+## File Structure
+The repo is structured as:
 
-## LLM Usage
-The Chat-GPT4 model contributed to the creation of data validation tests.
+-   `data/raw_data` contains the raw data as obtained from the Government of Ontario.
+-   `data/analysis_data` contains the cleaned dataset that was constructed.
+-   `model` contains fitted models.
+-   `other` contains a datasheet, details about LLM chat interactions, and sketches.
+-   `paper` contains the files used to generate the paper, including the Quarto document and reference bibliography file, as well as the PDF of the paper.
+-   `scripts` contains the R scripts used to simulate, clean, test, and model data.
+
+## Statement on LLM usage
+The ChatGPT-4 model contributed to the creation of data validation tests and the polishing of wording. The entire chat history is available in `other/llm/usage.txt`.
