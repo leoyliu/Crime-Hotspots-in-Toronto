@@ -16,3 +16,9 @@ The repo is structured as:
 
 ## Statement on LLM usage
 The ChatGPT-4 model contributed to the creation of data validation tests and the polishing of wording. The entire chat history is available in `other/llm_usage/usage.txt`.
+
+------------------------------------------------------------------------
+
+*Note: Please execute `05-install_packages.R` first to ensure all necessary packages are installed. Then, you can proceed to use the read function in R to import the data for further analysis with our R scripts.*
+
+------------------------------------------------------------------------
