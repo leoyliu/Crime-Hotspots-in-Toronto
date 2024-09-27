@@ -3,7 +3,7 @@ title: "Crime Hotspots in Toronto"
 subtitle: "Exploring the Patterns of Violent and Non-Violent Crimes in Local Communities"
 author: 
   - Yuanyi (Leo) Liu
-thanks: "Code and data are available at: https://github.com/leoyliu/Crime-in-Toronto."
+thanks: "Code and data are available at: https://github.com/leoyliu/Crime-Hotspots-in-Toronto."
 date: today
 date-format: long
 abstract: "In this paper, we analyzed crime trends in Toronto from 2014 to 2023, focusing on selected neighborhoods with the highest recorded crime rates. By transforming and visualizing crime data over the years, we identified clear patterns of increasing or decreasing crime across various neighborhoods. The findings highlight specific areas, like Moss Park and Yonge-Bay Corridor, where crime rates have significantly fluctuated, providing critical insights for community safety and resource allocation. Understanding these trends is essential for developing targeted interventions and improving public safety in Toronto’s most affected areas."
