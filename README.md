@@ -1,7 +1,8 @@
 # Crime Hotspots in Toronto
 
 ## Overview
-This repository contains a paper presenting a comprehensive analysis of crime trends in Toronto, leveraging a detailed dataset to explore how various types of crimes have evolved over recent years. Through data processing and visualization, the paper identifies significant trends in different crimes. The analysis provides valuable insights into the complex dynamics of urban crime, highlighting potential influencing factors such as socio-economic changes, urban development, and law enforcement strategies. This paper serves as a crucial resource for data-driven decision-making in public safety and community well-being initiatives.
+
+This repository contains a paper that presents an analysis of crime hotspots in Toronto, focusing on trends in both violent and non-violent crimes from 2014 to 2023. Using a detailed dataset sourced from official Toronto law enforcement records, the paper examines crime patterns across neighborhoods with the highest recorded crime cases, such as West Humber-Clairville, Moss Park, and Downtown Yonge East. Through data cleaning, processing, and visualization, the study identifies key trends, including the significant drop in crime rates during the COVID-19 lockdown and the subsequent rise in crime post-lockdown. The paper also emphasizes the need for targeted public safety interventions and highlights the influence of external factors such as the pandemic on crime dynamics. This research aims to inform data-driven decisions in public safety and community policy, offering actionable insights for reducing crime and improving neighborhood well-being.
 
 ## File Structure
 The repo is structured as:
