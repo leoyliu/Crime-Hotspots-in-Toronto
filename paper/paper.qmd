@@ -1,11 +1,12 @@
 ---
-title: "Crime in Toronto"
+title: "Crime Hotspots in Toronto"
+subtitle: "Exploring the Patterns of Violent and Non-Violent Crimes in Local Communities"
 author: 
   - Yuanyi (Leo) Liu
 thanks: "Code and data are available at: https://github.com/leoyliu/Crime-in-Toronto."
 date: today
 date-format: long
-abstract: "In this study, we conducted a comprehensive analysis of crime trends in Toronto, utilizing a dataset detailing various criminal activities from 2014 to 2023. Our analysis focused on the evolution of different types of crimes, with a specific emphasis on contrasting violent crimes, such as assault and robbery, against non-violent offenses like theft. The findings reveal significant patterns in both categories, highlighting an evolving landscape of criminal behavior in Toronto. This research is crucial as it sheds light on the changing dynamics of urban crime, providing valuable insights for policymakers, law enforcement agencies, and community leaders in developing targeted strategies for crime prevention and enhancing public safety in metropolitan areas."
+abstract: "In this paper, we analyzed crime trends in Toronto from 2014 to 2023, focusing on selected neighborhoods with the highest recorded crime rates. By transforming and visualizing crime data over the years, we identified clear patterns of increasing or decreasing crime across various neighborhoods. The findings highlight specific areas, like Moss Park and Yonge-Bay Corridor, where crime rates have significantly fluctuated, providing critical insights for community safety and resource allocation. Understanding these trends is essential for developing targeted interventions and improving public safety in Toronto’s most affected areas."
 format: pdf
 toc: true
 number-sections: true
@@ -17,14 +18,6 @@ bibliography: references.bib
 #| warning: false
 #| message: false
 
-# install.packages("knitr")
-# install.packages("opendatatoronto")
-# install.packages("tidyverse")
-# install.packages("here")
-# install.packages("tidyr")
-# install.packages("dplyr")
-# install.packages("kableExtra")
-
 library(knitr)
 library(opendatatoronto)
 library(tidyverse)
@@ -33,48 +26,116 @@ library(tidyr)
 library(dplyr)
 library(kableExtra)
 library(janitor)
+library(reshape2)
 ```
 
 
 # Introduction {#sec-intro}
 
-Urban crime, a significant issue impacting communities worldwide, poses substantial threats to public safety and social stability. Toronto, Canada's largest city, is no exception. The broader context of urban crime in Toronto is critical in understanding its impact on the city's development, public perception, and policy formulation. Despite extensive research in urban criminology, there remains a gap in comprehensively understanding how different types of crimes, especially violent and non-violent, have evolved over recent years in Toronto. This gap is crucial for developing effective crime prevention strategies and enhancing public safety.
+Crime rates in major cities are a central concern for policymakers, law enforcement, and communities alike. Understanding how crime fluctuates over time and identifying areas most affected by criminal activity are essential for ensuring public safety and optimizing the allocation of resources. In a city as diverse as Toronto, crime does not affect all neighborhoods equally, making it crucial to examine specific trends across different areas to inform targeted interventions. This paper explores crime trends in Toronto from 2014 to 2023, focusing on selected neighborhoods with notable crime patterns. The study seeks to provide insights into how crime has evolved over time and which neighborhoods require greater attention for crime prevention efforts.
 
-This paper provides a thorough examination of Toronto crime patterns from 2014 to 2023. The paper focuses on two types of crimes: violent crimes and nonviolent crimes. By using a comprehensive dataset, we delve into how these crime categories have changed over time and their implications for urban safety and policing strategies. The analysis not only uncovers patterns and trends in these crime categories but also offers a comparative perspective, highlighting the distinct trajectories of violent and non-violent crimes.
+Although overall crime trends in Toronto have been explored in previous studies, less attention has been given to how these trends differ at the neighborhood level over extended periods. This paper addresses that gap by analyzing crime data from specific neighborhoods across ten years, offering a detailed view of local crime dynamics. Using data from multiple sources, we identify key patterns in how crime has fluctuated, with particular emphasis on neighborhoods such as Moss Park and Yonge-Bay Corridor, which have shown significant changes over time.
 
-The findings of this paper are noteworthy for several reasons. First, they provide a nuanced understanding of the crime dynamics in a large metropolitan area, offering insights that are vital for policymakers, law enforcement, and community leaders. The patterns observed suggest shifts in criminal behavior and possibly reflect broader social and economic changes in the city. Second, the comparative analysis between violent and non-violent crimes offers a unique perspective on the nature of criminal activities, contributing to a more targeted approach in crime prevention and community safety initiatives.
+To conduct this analysis, we transformed raw crime data into a summarized format and visualized trends across each year from 2014 to 2023. The findings indicate that certain neighborhoods have experienced sharp increases in crime, while others have remained relatively stable or shown improvements. These insights are crucial for informing public safety strategies and ensuring that resources are directed to areas where they are most needed. By identifying which neighborhoods have the highest crime rates and how those rates have changed, policymakers can develop more targeted interventions to improve community safety.
 
-The paper is structured to facilitate a comprehensive understanding of the study and its implications. Following @sec-intro, @sec-data presents the data, detailing the data sources, analytical techniques, and the rationale behind the chosen methods. @sec-result discusses the results, elaborating on the observed trends and patterns in crime data. @sec-discussion provides an in-depth discussion of these findings, exploring potential factors influencing these trends, drawing connections to broader urban issues, and providing suggestions for future research in this area.
+The structure of the paper is organized as follows: Following @sec-intro, @sec-data outlines how the data was collected, cleaned, and analyzed. @sec-result presents the main findings, including detailed crime trends for each neighborhood and year. Finally, @sec-discussion provides an in-depth discussion of these findings, exploring potential factors influencing these trends, drawing connections to broader urban issues, and providing suggestions for future research in this area.
 
-\newpage
 
 # Data {#sec-data}
 
-This section aims to offer an insightful understanding of the dataset utilized in our analysis, focusing on its content, origin, and the methods applied for data manipulation and visualization.
+This section aims to provide a clear understanding of the dataset used in our analysis, focusing on its content, source, and the methods applied for organizing, aggregating, and visualizing crime data. The dataset serves as the foundation for our exploration of crime trends in Toronto's neighborhoods, particularly examining the top 10 areas with the highest reported crime rates between 2014 and 2023.
 
-## Source of the Data
-The dataset comprises crime statistics in Toronto, spanning from 2014 to 2023. The dataset analyzed in this report was obtained in csv format from the City of Toronto Open Data Portal[@citedata] using the R package `opendatatoronto`[@citeopendatapkg]. It includes the Crime Data by Neighbourhood. Counts are available for Assault, Auto Theft, Break and Enter, Robbery, Theft Over, Homicide and Shooting & Firearm Discharges. Data also includes the crime rate per 100,000 population calculated using the population estimates provided by Environics Analytics. For the purpose of this study, we focus solely on the number of reported incidents. The data, which is updated as of January 14th, 2024, is a well-regarded resource for scholarly and policy-making endeavors, valued for its thoroughness and dependability.
+## Source and Methodology
+The dataset comprises crime statistics in Toronto, spanning from 2014 to 2023. The dataset analyzed in this report was obtained in csv format from the City of Toronto Open Data Portal[@citedata] using the R package `opendatatoronto`[@citeopendatapkg]. It includes the Crime Data by Neighbourhood. Counts are available for Assault, Auto Theft, Break and Enter, Robbery, Theft Over, Homicide and Shooting & Firearm Discharges. Data also includes the crime rate per 100,000 population calculated using the population estimates provided by Environics Analytics. For the purpose of this study, we focus solely on the number of reported incidents. The data, which is updated as of January 11th, 2024, is a well-regarded resource for scholarly and policy-making endeavors, valued for its thoroughness and dependability.
 
-Although alternative datasets were considered, this specific dataset was selected for its detailed year-wise breakdown and the diversity of crime types it encompasses. Other datasets either lacked the temporal detail or the variety of crime categories present in our chosen dataset.
+Although alternative datasets were considered, this specific dataset was selected for its detailed year-wise breakdown and the diversity of crime types it encompasses. Other datasets either lacked the temporal detail or the variety of crime categories present in our chosen dataset. The data was processed and cleaned using R[@citeR], a powerful statistical programming language. For key operations, please refer to the [@sec-appendix]. 
 
-## Data Manipulation and Cleaning
-The data was processed and cleaned using R[@citeR], a powerful statistical programming language. For key operations, please refer to the [@sec-appendix]. 
+## Variables
+The dataset includes several variables representing different types of crimes reported across Toronto's neighborhoods from 2014 to 2023. Given the extensive dataset, which covers 150 neighborhoods, we have chosen to focus on the top ten neighborhoods with the highest total crime counts. This allows for a more focused and manageable analysis while still capturing significant crime trends across the city.
 
-## Variables Explanation
-To better understand the data, the summary_table dataset was developed to offer a more structured and aggregated view of the crime data. By transforming and summarizing the data into a format that displays crime types against years, this dataset simplifies the task of identifying and analyzing trends over time. The dataset includes various crime categories, such as assault, theft, and other types, with each variable representing the annual count of reported cases for each crime type. This longitudinal data provides a detailed view of the crime trends in Toronto over a decade. 
-```{r}
-#| label: tbl-data-summary
-#| tbl-cap: Crime Incidents Summary by Year
+```{r fig.width=8, fig.height=4.5}
+#| label: fig-top-crime-area
+#| fig-cap: Top 10 Neighborhoods with the Most Crimes
 #| echo: false
 
 # Read the data
-summary_table <- read.csv(here("data/analysis_data/summary_table.csv"), check.names = FALSE)
+cleaned_data <- read.csv(here("data/02-analysis_data/analysis_data.csv"), check.names = FALSE)
+
+crime_totals <- cleaned_data %>%
+  rowwise() %>% 
+  mutate(total_crimes = sum(c_across(-Neighbourhood), na.rm = TRUE)) %>%
+  ungroup() %>%
+  select(Neighbourhood, total_crimes)
+
+# Finding the top 10 neighborhoods with the most crimes
+top_10_neighborhoods <- crime_totals %>%
+  arrange(desc(total_crimes)) %>%
+  slice(1:10)
+
+ggplot(top_10_neighborhoods, aes(x = reorder(Neighbourhood, total_crimes), y = total_crimes, fill = total_crimes)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  labs(x = "Neighbourhood",
+       y = "Total Crimes") +
+  scale_fill_gradient(low = "lightblue", high = "darkblue", name = "Total Crimes") +
+  theme_minimal()
+```
+
+To simplify the analysis, we aggregated the data to produce a `Total Crimes` variable by summing the various crime types for each year. @fig-top-crime-area shows a bar chart of the top ten neighborhoods with the highest overall crimes, emphasizing the variation in crime levels across these areas. Notably, West Humber-Clairville reports the highest total crimes over the period, followed by Moss Park and Downtown Yonge East. The graph clearly shows a gradient of total crimes from the highest in **West Humber-Clairville** to relatively lower totals in **South Riverdale** and **West Hill**. This ranking allows for an easier comparison across neighborhoods and provides insight into which areas may require more focused crime prevention efforts.
+
+\newpage
+
+Transitioning from the visualization to a more detailed breakdown, @tbl-data-summary presents the total crime numbers for each neighborhood across the ten years from 2014 to 2023. This table provides a year-by-year view of how crime rates have fluctuated in each of the top ten neighborhoods.
+
+```{r}
+#| label: tbl-data-summary
+#| tbl-cap: Yearly Crime Counts in the Top 10 Toronto Neighborhoods (2014-2023)
+#| echo: false
+
+# Read the data
+cleaned_data <- read.csv(here("data/02-analysis_data/analysis_data.csv"), check.names = FALSE)
+
+# Reshape the data from wide to long format for better manipulation
+long_data <- cleaned_data %>%
+  pivot_longer(
+    cols = -Neighbourhood,
+    names_to = c("crime_type", "year"),
+    names_sep = " "
+  )
+
+# Group the data by Neighbourhood and year, then sum up the crime values
+grouped_data <- long_data %>%
+  group_by(Neighbourhood, year) %>%
+  summarise(total_crimes = sum(value, na.rm = TRUE), .groups = 'drop')
+
+# Pivot the data back to wide format, with years as columns
+wide_data <- grouped_data %>%
+  pivot_wider(names_from = year, values_from = total_crimes)
+
+neighborhoods_to_select <- c(
+  "West Humber-Clairville", 
+  "Moss Park", 
+  "Downtown Yonge East", 
+  "Kensington-Chinatown", 
+  "Yonge-Bay Corridor", 
+  "Wellington Place", 
+  "York University Heights", 
+  "Annex", 
+  "South Riverdale", 
+  "West Hill"
+)
+
+# Filter the dataset based on the selected neighborhoods
+summary_table <- wide_data %>%
+  filter(Neighbourhood %in% neighborhoods_to_select) %>%
+  mutate(Neighbourhood = factor(Neighbourhood, levels = neighborhoods_to_select)) %>%
+  arrange(Neighbourhood)
 
 # Make a summary table
 summary_table %>%
   slice(1:10) %>%
   kable(
-    col.names = c("Crime Type", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023"),
+    col.names = c("Neighbourhood", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023"),
     digits = 1,
     booktabs = TRUE,
     linesep = "",
@@ -82,98 +143,172 @@ summary_table %>%
     format.args = list(big.mark = ",")) %>%
     kable_styling(latex_options = "HOLD_position", font_size = 10, position = "center")
 ```
-For @tbl-data-summary, we observe a detailed enumeration of various crime incidents reported annually in Toronto from 2014 to 2023. Assault cases dominate the data, climbing substantially in subsequent years, indicating a worsening public safety concern. Each crime category follows its own trajectory, with theft from motor vehicles and major theft also showing significant fluctuations.
+@tbl-data-summary reveals how crime rates in these neighborhoods have fluctuated over time. Some areas, such as West Humber-Clairville, have seen consistent increases, while others, like Kensington-Chinatown, have experienced more volatility, with crime rates dropping in recent years. This breakdown is essential for understanding not just the overall crime totals but also the year-to-year shifts that could reflect the impact of local policies, demographic changes, or external factors influencing crime trends.
 
-We proceeded to organize the dataset into two categories: 'Violent' crimes, which included offenses such as 'Assault' and 'Homicide', and 'Non-Violent' crimes, encompassing acts like 'Theft'. It is particularly valuable for understanding the overall landscape of crime in Toronto, focusing on the comparison between violent and non-violent incidents.
-```{r}
-#| label: tbl-combined-data-summary
-#| tbl-cap: Crime Incidents Summary of Violent and Non-Violent Crime Cases by Year
+We further differentiated the crime data by classifying crimes into two categories: Violent and Non-Violent. Violent crimes include offenses such as Assault, Homicide, Break-and-Enter, Robbery, and Shooting Incidents, while non-violent crimes encompass acts like Theft. The stacked bar chart in @fig-combined-data-summary visualizes this distinction, showing the proportion of violent and non-violent crimes for each of the top 10 neighborhoods.
+
+```{r fig.width=8, fig.height=4.5}
+#| label: fig-combined-data-summary
+#| fig-cap: Distribution of Violent and Non-Violent Crimes in the Top 10 Neighborhoods
 #| echo: false
 
-# Read the data
-two_types_crime <- read.csv(here("data/analysis_data/two_types_crime.csv"), check.names = FALSE)
+# Read the cleaned data
+cleaned_data <- read.csv(here::here("data/02-analysis_data/analysis_data.csv"), check.names = FALSE)
 
-# Make a table
-two_types_crime %>%
-  slice(1:10) %>%
-  kable(
-    col.names = c("Crime Type", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023"),
-    digits = 1,
-    booktabs = TRUE,
-    linesep = "",
-    align = c("l", "l", "c", "c", "r", "r"),
-    format.args = list(big.mark = ",")) %>%
-    kable_styling(latex_options = "HOLD_position", font_size = 10, position = "center")
+# Define violent crimes
+violent_crimes <- c("assault", "breakenter", "homicide", "robbery", "shooting")
+
+# Reshape the data from wide to long format
+long_data <- cleaned_data %>%
+  pivot_longer(
+    cols = -Neighbourhood,  # Keep Neighbourhood column unchanged
+    names_to = c("crime_type", "year"),  # Split column names into crime_type and year
+    names_sep = " "
+  )
+
+# Categorize crimes into violent and non-violent
+long_data <- long_data %>%
+  mutate(crime_category = ifelse(crime_type %in% violent_crimes, "Violent", "Non-Violent"))
+
+# Aggregate the data by Neighborhood, Year, and Crime Category
+aggregated_data <- long_data %>%
+  group_by(Neighbourhood, year, crime_category) %>%
+  summarise(total_crimes = sum(value, na.rm = TRUE), .groups = 'drop')
+
+# Filter to only include the top 10 neighborhoods based on total crimes
+crime_totals <- aggregated_data %>%
+  group_by(Neighbourhood) %>%
+  summarise(total_crimes = sum(total_crimes, na.rm = TRUE)) %>%
+  arrange(desc(total_crimes)) %>%
+  slice(1:10)
+
+# Merge the top 10 neighborhoods with the aggregated data
+top_10_neighborhoods <- aggregated_data %>%
+  filter(Neighbourhood %in% crime_totals$Neighbourhood)
+
+# Create a bar chart splitting by violent and non-violent crimes
+ggplot(top_10_neighborhoods, aes(x = reorder(Neighbourhood, total_crimes), y = total_crimes, fill = crime_category)) +
+  geom_bar(stat = "identity", position = "stack") +
+  coord_flip() +
+  labs(x = "Neighbourhood",
+       y = "Total Crimes",
+       fill = "Crime Category") +
+  scale_fill_manual(values = c("Violent" = "#F8766D", "Non-Violent" = "cyan3")) + 
+  theme_minimal() +
+  theme(axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12))
 ```
 
-@tbl-combined-data-summary organized view of crime statistics over a range of years, specifically differentiated into two main categories: 'Violent' and 'Non-Violent' crimes. Each row in the table represents one of these two categories. The columns of the table are divided by year, ranging from 2014 to 2023. Under each year's column, the table displays the total number of reported incidents for each crime category. Here, violent crimes exhibit a steady rise over the years, dwarfing the non-violent crimes, which display slight variability.
+@fig-combined-data-summary highlights the relative proportions of violent and non-violent crimes in each neighborhood. In some neighborhoods, like **West Humber-Clairville**, non-violent crimes make up a significant portion of the total, while others, like **Moss Park** and **York University Heights**, violent crimes (such as assault and robbery) constitute a significant proportion of the total, highlighting the need for targeted interventions. **Downtown Yonge East** and **Kensington-Chinatown** show a slightly higher prevalence of non-violent crimes, likely due to high population density and economic activity. Overall, the chart indicates that different neighborhoods experience varying proportions of violent and non-violent crimes, suggesting that crime prevention strategies need to be tailored to the specific needs of each area to effectively address both categories of crime.
 
-\newpage
+## Measurements
+
+The data used in this study was measured based on official crime reports collected by law enforcement agencies and the City of Toronto. Each crime type, such as assault, auto theft, and break-and-enter, was measured as the total number of reported incidents per neighborhood, recorded annually from 2014 to 2023. These incidents were classified based on standard legal definitions and recorded by police officers responding to each reported crime.
+
+The measurement of crime data is straightforward, as each crime variable represents the count of incidents reported within a calendar year for each neighborhood. The dataset ensures consistency in measurement across neighborhoods and years, enabling accurate time-series analysis of crime trends. While reporting practices may vary slightly due to local policing efforts or societal factors, the dataset’s reliance on official records ensures a high degree of validity and reliability in how crime is measured and represented.
+
+A Total Crimes variable was constructed by aggregating all individual crime types for each year and neighborhood. This aggregate measurement helps provide an overall view of criminal activity while still allowing for the examination of individual crime types when needed. The consistency and structure of the dataset ensure that the measurements used provide an accurate representation of crime patterns across Toronto neighborhoods.
+
 
 # Results {#sec-result}
+
 In this section, we delve into the core findings of our study, shedding light on the intricate patterns and trends of crime in Toronto from 2014 to 2023. Our analysis dissects both violent and non-violent crime statistics, revealing insightful correlations and variations over the decade.
+
+The results of this study provide a detailed analysis of crime trends across Toronto's neighborhoods from 2014 to 2023, with a focus on the ten neighborhoods reporting the highest total crime rates. This section presents both aggregated crime data and year-by-year fluctuations for each neighborhood, offering insights into how crime patterns have evolved over time. Through visualizations and summary statistics, we can identify key neighborhoods with consistently high or fluctuating crime rates, as well as trends that may inform future crime prevention strategies. The following subsections break down these findings, starting with an overview of total crimes across all selected neighborhoods and moving into more detailed discussions of specific crime trends.
+
 ```{r fig.width=10, fig.height=5.5}
 #| label: fig-trends-in-crime
 #| fig-cap: Trends in Crime Cases in Toronto
 #| echo: false
 
-# Transform the data into a long format
-long_data <- gather(summary_table, Year, Count, -Crime_Type)
+# Reshape the filtered data back to long format for plotting
+long_summary_table <- summary_table %>%
+  pivot_longer(
+    cols = starts_with("20"),  # Columns corresponding to the years
+    names_to = "year",
+    values_to = "total_crimes"
+  )
 
-# Plotting the line graph
-ggplot(long_data, aes(x = Year, y = Count, group = Crime_Type, color = Crime_Type)) +
-  geom_line(linewidth = 1) + # Use linewidth instead of size
-  geom_point(size = 1.5) + # Point size
-  theme_minimal() + # Minimal theme
-  labs(title = "Crime Count by Type Over Years",
-         x = "Year",
-         y = "Number of Cases",
-         color = "Crime Type") +
+# Plot the line graph with enhanced aesthetics
+ggplot(long_summary_table, aes(x = as.numeric(year), y = total_crimes, color = Neighbourhood, group = Neighbourhood)) +
+  geom_line(size = 1.2) +  # Thicker line for better visibility
+  geom_point(size = 2.5) +  # Larger points on the lines
+  labs(
+    title = "Total Crimes by Year",
+    subtitle = "Number of total crimes between 2014–2023",
+    x = "Year",
+    y = "Number of Total Crimes",
+    color = "Neighbourhoods"
+  ) +
+  theme_minimal(base_size = 15) +  # Adjusting base font size
+  scale_color_brewer(palette = "Set2") +  # Using a predefined color palette
   theme(
-    plot.title = element_text(hjust = 0.5), # Center the plot title
-    legend.title = element_blank(), # Remove the legend title
-    axis.text.x = element_text(angle = 45, hjust = 1), # Angle the x-axis text for readability
-    text = element_text(size = 16), # Increase the global font size
+    plot.title = element_text(face = "bold", size = 18, hjust = 0.5),  # Centered, bold title
+    plot.subtitle = element_text(size = 14, hjust = 0.5),  # Centered subtitle
+    axis.title.x = element_text(margin = margin(t = 10), size = 12),  # Adjust x-axis title
+    axis.title.y = element_text(margin = margin(r = 10), size = 12),  # Adjust y-axis title
+    axis.text = element_text(size = 10),  # Adjust axis labels size
+    legend.position = "right",  # Move the legend to the right
+    legend.title = element_text(size = 12),  # Adjust legend title size
+    legend.text = element_text(size = 10),  # Adjust legend text size
   )
 ```
 @fig-trends-in-crime reveals distinct trends for various crime types in Toronto over the years. We notice that assault crimes have been on the rise in recent years. This could signal a growing concern in public safety and might prompt law enforcement to investigate the underlying causes, such as increased urbanization, changes in population density, or other socio-economic factors. Conversely, there is a noticeable decline in theft-related crimes, which could reflect the success of recent crime prevention initiatives, improved security measures, or increased public awareness.
 
 ```{r}
 #| label: fig-trends-in-two-types-crime
-#| fig-cap: Comparative Trend Analysis of Violent and Non-Violent Crime Cases
+#| fig-cap: Trends in Violent and Non-Violent Crimes in Toronto (2014-2023)
 #| echo: false
 
-# Pivot the data to long format for plotting
-long_data <- two_types_crime %>%
-  select(Category, `2014`:`2023`) %>%
-  pivot_longer(cols = -Category, names_to = "Year", values_to = "Cases")
+# Load the cleaned data
+cleaned_data <- read.csv(here::here("data/02-analysis_data/analysis_data.csv"), check.names = FALSE)
 
-# Create the plot
-ggplot(long_data, aes(x = Year, y = Cases, group = Category, color = Category)) +
-  geom_line(linewidth = 1) + # Use linewidth instead of size
-  geom_point(size = 2) + # Point size
-  theme_minimal() + # Minimal theme
-  labs(title = "Evolution of Violent and Non-Violent Crimes Over the Years",
-       x = "Year",
-       y = "Number of Cases") +
+# Define violent crimes
+violent_crimes <- c("assault", "breakenter", "homicide", "robbery", "shooting")
+
+# Reshape the data from wide to long format
+long_data <- cleaned_data %>%
+  pivot_longer(
+    cols = -Neighbourhood,  # Keep Neighbourhood column unchanged (if applicable)
+    names_to = c("crime_type", "year"),  # Split column names into crime_type and year
+    names_sep = " "
+  )
+
+# Categorize crimes into violent and non-violent
+long_data <- long_data %>%
+  mutate(crime_category = ifelse(crime_type %in% violent_crimes, "Violent", "Non-Violent"))
+
+# Aggregate the data by Year and Crime Category
+aggregated_data <- long_data %>%
+  group_by(year, crime_category) %>%
+  summarise(total_crimes = sum(value, na.rm = TRUE), .groups = 'drop')
+
+# Plot the line graph for violent and non-violent crimes over the years
+ggplot(aggregated_data, aes(x = as.numeric(year), y = total_crimes, color = crime_category, group = crime_category)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  theme_minimal() + 
+  labs(
+    x = "Year",
+    y = "Total Crimes",
+  ) +
   scale_color_manual(values = c("Violent" = "red", "Non-Violent" = "blue")) +
   theme(
-    plot.title = element_text(hjust = 0.5), # Center the plot title
     legend.title = element_blank(), # Remove the legend title
     axis.text.x = element_text(angle = 45, hjust = 1) # Angle the x-axis text for readability
   )
 ```
-\newpage
 
-@fig-trends-in-two-types-crime compares the number of cases reported for violent and non-violent crimes from 2014 to 2023. The x-axis represents the years, and the y-axis indicates the number of cases.
-
-The red line represents violent crimes, and the blue line represents non-violent crimes. The plot shows distinct trends for both categories over the specified time frame.
-
-* **Violent Crimes (Red Line):** There has been an overall increasing trend in the number of violent crime cases over the years. There are some fluctuations, with a noticeable dip occurring in one of the years, but the general direction is upwards, especially towards the end of the period, indicating a rise in violent crimes or an increase in reporting.
-
-* **Non-Violent Crimes (Blue Line):** The trend in non-violent crime cases shows some variability but does not have as clear an increasing pattern as violent crimes. There are years where the rate has increased or decreased, but the last year shows a notable increase, suggesting a possible upward trend at the end of the period.
+There has been an overall increasing trend in the number of violent crime cases over the years (@fig-trends-in-two-types-crime). There are some fluctuations, with a noticeable dip occurring in one of the years, but the general direction is upwards, especially towards the end of the period, indicating a rise in violent crimes or an increase in reporting. The trend in non-violent crime cases shows some variability but does not have as clear an increasing pattern as violent crimes. There are years where the rate has increased or decreased, but the last year shows a notable increase, suggesting a possible upward trend at the end of the period.
 
 Overall, the graph indicates that while both violent and non-violent crimes have seen rises and falls, the increase in violent crimes towards the later years is more pronounced. This could reflect changes in societal conditions, law enforcement practices, or reporting mechanisms.
+
+A difference following the pandemic is also especially noticable (@fig-trends-in-two-types-crime). Add another sentence or two.
+
+
+There has been a clear overall increasing trend in violent crime cases over the years, as shown in @fig-trends-in-two-types-crime. While there are fluctuations, with a noticeable dip in one particular year, the general direction is upward, particularly towards the end of the period, suggesting an increase in violent crime or heightened reporting. In contrast, non-violent crime cases display more variability, without a consistent increasing pattern. Some years saw rises or declines, but the final year shows a significant increase, possibly indicating an emerging upward trend.
+
+Overall, the graph shows that while both violent and non-violent crimes have experienced fluctuations, the surge in violent crimes in the later years is more pronounced. This may reflect changes in societal factors, law enforcement policies, or crime reporting practices. Notably, the post-pandemic period also appears to coincide with an increase in both categories of crime.
 
 \newpage
 
